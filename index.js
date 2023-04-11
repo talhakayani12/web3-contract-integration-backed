@@ -1,2 +1,27 @@
-const web3 = require("web3");
-console.error("file: index.js:2 ~ web3:", web3);
+require("dotenv").config();
+
+var bodyParser = require("body-parser");
+
+const express = require("express");
+
+const helmet = require("helmet");
+
+const app = express();
+
+app.use(bodyParser.json({ limit: "400mb" }));
+app.use(bodyParser.urlencoded({ limit: "400mb", extended: true }));
+
+app.enable("etag");
+app.disable("x-powered-by");
+app.set("json spaces", 2);
+
+app.use(helmet());
+
+app.use("/", /* require('./middlewares/valid-referer'), */ require("./routes"));
+
+const port = process.env.PORT || 5000;
+const server = app.listen(port, async () => {
+  console.log("Server is running on port:" + port);
+});
+
+module.exports = { app };
