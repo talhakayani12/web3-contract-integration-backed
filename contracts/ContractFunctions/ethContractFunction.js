@@ -19,4 +19,6 @@ const balanceOf = async (chain_network, walletAddress) => {
   return balanceOfContractResponse;
 };
 
+// TODO: Contract Function integration here
+
 module.exports = { totalSupply, balanceOf };
