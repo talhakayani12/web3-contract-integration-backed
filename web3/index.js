@@ -3,7 +3,15 @@ const { RPC_URLS, CONTRACT_DETAILS } = require("../contracts/config");
 
 const getWeb3 = (network_name) => {
   try {
+    console.log(
+      "file: index.js:7 ~ getWeb3 ~ RPC_URLS[network_name]:",
+      RPC_URLS[network_name]
+    );
+
     const web3 = new Web3(RPC_URLS[network_name]);
+
+    web3.eth.accounts.wallet.add(process.env.ADMIN_WALLET_PRIVATE_KEY);
+
     return web3;
   } catch (err) {
     console.error("file: index.js:8 ~ getWeb3 ~ err:", err);

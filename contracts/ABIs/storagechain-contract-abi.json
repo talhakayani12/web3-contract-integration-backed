@@ -1,16 +1,41 @@
 [
   {
     "inputs": [],
-    "name": "flipPauseState",
+    "name": "depositStor",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "depositir",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "DepositStorEvent",
+    "type": "event"
+  },
+  {
     "inputs": [],
-    "name": "LocktotalCollateral",
+    "name": "flipPauseState",
     "outputs": [],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -33,28 +58,61 @@
     "type": "event"
   },
   {
+    "anonymous": false,
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
+        "indexed": true,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
       },
       {
-        "internalType": "address payable",
-        "name": "receiver",
-        "type": "address"
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
       }
     ],
-    "name": "releaseCollateral",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
+    "name": "Received",
+    "type": "event"
   },
   {
     "inputs": [],
     "name": "renounceOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "depositir",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "StorTransferd",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "transferIntoTreasury",
+    "outputs": [],
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -78,16 +136,14 @@
         "type": "address"
       }
     ],
-    "name": "checkCollateral",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
+    "name": "transferStorToUser",
+    "outputs": [],
+    "stateMutability": "payable",
     "type": "function"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
   },
   {
     "inputs": [],
@@ -117,7 +173,7 @@
   },
   {
     "inputs": [],
-    "name": "totalCollateral",
+    "name": "treasury",
     "outputs": [
       {
         "internalType": "uint256",

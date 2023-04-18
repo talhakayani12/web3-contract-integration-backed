@@ -5,6 +5,7 @@ var bodyParser = require("body-parser");
 const express = require("express");
 
 const helmet = require("helmet");
+const cors = require("cors");
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.enable("etag");
 app.disable("x-powered-by");
 app.set("json spaces", 2);
 
+app.use(cors());
 app.use(helmet());
 
 app.use("/", /* require('./middlewares/valid-referer'), */ require("./routes"));
