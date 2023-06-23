@@ -61,6 +61,12 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
         "indexed": true,
         "internalType": "address",
         "name": "sender",
