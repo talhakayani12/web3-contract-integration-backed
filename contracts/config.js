@@ -8,12 +8,12 @@ const CONTRACT_DETAILS = {
   },
   8726: {
     abi: storageChainContractAbi,
-    address: '0x2A7b9b12e2fAeb99FfFF0765F2f484A8D3dFbEe7',
+    address: '0xF6E87503a9c06219F07e82C27970D1415da4fBeB',
   },
 };
 
 const RPC_URLS = {
-  storagechain: 'https://storchain-mainnet.invo.zone/',
+  storagechain: 'https://testnet-validator.storagechain.io',
   eth_goerli: 'https://goerli.infura.io/v3/7a9d2a7b9c6f459ea3cddcd3a917c460',
   polygon_mombai:
     'https://polygon-mumbai.infura.io/v3/7a9d2a7b9c6f459ea3cddcd3a917c460',

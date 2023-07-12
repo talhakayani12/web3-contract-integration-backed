@@ -1,4 +1,4 @@
-const { getContract } = require("../../web3");
+const { getContract } = require('../../web3');
 
 const transferStorToUser = async (
   web3,
@@ -7,13 +7,6 @@ const transferStorToUser = async (
 ) => {
   try {
     const contract = await getContract(web3);
-
-    const accounts = await web3.eth.getAccounts();
-    console.log(
-      "file: storageChainContractFunction.js:12 ~ accounts:",
-      accounts,
-      process.env.ADMIN_WALLET_ADDRESS
-    );
 
     const estimatedGasFee = await contract.methods
       .transferStorToUser(userWalletAddress)
@@ -33,7 +26,7 @@ const transferStorToUser = async (
     return transferStorToUserResponse;
   } catch (err) {
     console.error(
-      "file: storageChainContractFunction.js:5 ~ transferStorToUser ~ err:",
+      'file: storageChainContractFunction.js:5 ~ transferStorToUser ~ err:',
       err
     );
   }
@@ -43,7 +36,7 @@ const mintWrapStor = async (web3, mintAddress, mintAmount) => {
   try {
     const contract = await getContract(web3);
     console.log(
-      "file: storageChainContractFunction.js:45 ~ mintWrapStor ~ contract:",
+      'file: storageChainContractFunction.js:45 ~ mintWrapStor ~ contract:',
       contract.methods
     );
 
@@ -64,7 +57,7 @@ const mintWrapStor = async (web3, mintAddress, mintAmount) => {
     return mintWrapStorTokensResponse;
   } catch (err) {
     console.error(
-      "file: storageChainContractFunction.js:46 ~ mint ~ err:",
+      'file: storageChainContractFunction.js:46 ~ mint ~ err:',
       err
     );
   }
@@ -73,10 +66,6 @@ const mintWrapStor = async (web3, mintAddress, mintAmount) => {
 const depositStorByAdmin = async (web3, depositAmount) => {
   try {
     const contract = await getContract(web3);
-    console.log(
-      "file: storageChainContractFunction.js:45 ~ mintWrapStor ~ contract:",
-      contract.methods
-    );
 
     const weiAmountToDeposit = web3.utils.toWei(depositAmount);
 
@@ -95,7 +84,7 @@ const depositStorByAdmin = async (web3, depositAmount) => {
     return mintWrapStorTokensResponse;
   } catch (err) {
     console.error(
-      "file: storageChainContractFunction.js:46 ~ mint ~ err:",
+      'file: storageChainContractFunction.js:46 ~ mint ~ err:',
       err
     );
   }

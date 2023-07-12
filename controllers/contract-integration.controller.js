@@ -1,17 +1,17 @@
 const {
   totalSupply,
   balanceOf,
-} = require("../contracts/ContractFunctions/ethContractFunction");
+} = require('../contracts/ContractFunctions/ethContractFunction');
 const {
   transferStorToUser,
   mintWrapStor,
   depositStorByAdmin,
-} = require("../contracts/ContractFunctions/storageChainContractFunction");
-const { getWeb3 } = require("../web3");
+} = require('../contracts/ContractFunctions/storageChainContractFunction');
+const { getWeb3 } = require('../web3');
 
 const welcome = async (req, res) => {
   return res.status(200).send({
-    message: "Welcome to the contract integration api",
+    message: 'Welcome to the contract integration api',
     success: true,
   });
 };
@@ -23,7 +23,7 @@ const getTotalSupply = async (req, res) => {
     return res.status(200).send({ totalSupply: totalSupplyResponse });
   } catch (err) {
     console.error(
-      "file: contract-integration.controller.js:33 ~ getTotalSupply ~ err:",
+      'file: contract-integration.controller.js:33 ~ getTotalSupply ~ err:',
       err
     );
     return res.status(500).send({ err: err.message });
@@ -32,21 +32,13 @@ const getTotalSupply = async (req, res) => {
 const getBalanceOf = async (req, res) => {
   try {
     const { network_name, walletAddress } = req.params;
-    console.error(
-      "file: contract-integration.controller.js:29 ~ getBalanceOf ~ walletAddress:",
-      walletAddress
-    );
-    console.error(
-      "file: contract-integration.controller.js:29 ~ getBalanceOf ~ network_name:",
-      network_name
-    );
 
     const balanceOfResponse = await balanceOf(network_name, walletAddress);
 
     return res.status(200).send({ balanceOf: balanceOfResponse });
   } catch (err) {
     console.error(
-      "file: contract-integration.controller.js:33 ~ getTotalSupply ~ err:",
+      'file: contract-integration.controller.js:33 ~ getTotalSupply ~ err:',
       err
     );
     return res.status(500).send({ err: err.message });
@@ -56,15 +48,9 @@ const getBalanceOf = async (req, res) => {
 const depositInTreasury = async (request, response) => {
   try {
     const { recive_network, send_network, transactionHash } = request.params;
-    console.log(
-      "file: contract-integration.controller.js:53 ~ depositInTreasury ~ transactionHash:",
-      transactionHash,
-      recive_network,
-      send_network
-    );
 
     if (!transactionHash) {
-      throw new Error("Please provide the transaction hash.");
+      throw new Error('Please provide the transaction hash.');
     }
 
     const web3 = getWeb3(recive_network);
@@ -72,6 +58,7 @@ const depositInTreasury = async (request, response) => {
     const transactionReceipt = await web3.eth.getTransactionReceipt(
       transactionHash
     );
+
     const buredValue = web3.utils.hexToNumberString(
       transactionReceipt?.logs[0]?.data
     );
@@ -91,7 +78,7 @@ const depositInTreasury = async (request, response) => {
     });
   } catch (err) {
     console.error(
-      "file: contract-integration.controller.js:52 ~ depositInTreasury ~ err:",
+      'file: contract-integration.controller.js:52 ~ depositInTreasury ~ err:',
       err
     );
 
@@ -102,28 +89,14 @@ const depositInTreasury = async (request, response) => {
 const transferIntoTreasury = async (request, response) => {
   try {
     const { recive_network, send_network, transactionHash } = request.params;
-    console.log(
-      "file: contract-integration.controller.js:53 ~ depositInTreasury ~ transactionHash:",
-      transactionHash,
-      recive_network,
-      send_network
-    );
 
     if (!transactionHash) {
-      throw new Error("Please provide the transaction hash.");
+      throw new Error('Please provide the transaction hash.');
     }
 
     const web3 = getWeb3(send_network);
 
     const transactionReceipt = await web3.eth.getTransaction(transactionHash);
-    console.log(
-      "file: contract-integration.controller.js:118 ~ transferIntoTreasury ~ transactionReceipt:",
-      transactionReceipt
-    );
-
-    // const transferedValue = web3.utils.hexToNumberString(
-    //   transactionReceipt?.value
-    // );
 
     const mintWeb3 = getWeb3(recive_network);
 
@@ -140,7 +113,7 @@ const transferIntoTreasury = async (request, response) => {
     });
   } catch (err) {
     console.error(
-      "file: contract-integration.controller.js:103 ~ transferIntoTreasury ~ err:",
+      'file: contract-integration.controller.js:103 ~ transferIntoTreasury ~ err:',
       err
     );
     return response.status(500).send({ err: err.message });
@@ -158,7 +131,7 @@ const depositAmount = async (request, response) => {
     return response.status(200).send(depositAmountResponse);
   } catch (err) {
     console.error(
-      "file: contract-integration.controller.js:153 ~ depositAmount ~ err:",
+      'file: contract-integration.controller.js:153 ~ depositAmount ~ err:',
       err
     );
     return response.status(500).send({ err: err.message });
