@@ -58,6 +58,16 @@ const depositInTreasury = async (request, response) => {
     if (!transactionHash) {
       throw new Error("Please provide the transaction hash.");
     }
+    const checkTransactionStatus = await database.swapping.getWStorSwapDetails(
+      transactionHash
+    );
+
+    if (checkTransactionStatus?.status) {
+      return response.status(400).send({
+        success: false,
+        message: "This transaction is already processed",
+      });
+    }
 
     const web3 = getWeb3(recive_network);
 
@@ -78,6 +88,14 @@ const depositInTreasury = async (request, response) => {
     );
 
     if (!transferStorToUserResponse?.status) {
+      const payload = {
+        walletAddress: transactionReceipt?.from,
+        txnHashWStor: transactionHash,
+        status: transferStorToUserResponse?.status,
+        conversionType: "WSTOR to STOR",
+      };
+
+      await database?.swapping?.addSwappingDetails(payload);
       return response.status(400).send({
         success: false,
         message: "Something went wrong while transfering STOR tokens to user",
@@ -132,7 +150,16 @@ const transferIntoTreasury = async (request, response) => {
     if (!transactionHash) {
       throw new Error("Please provide the transaction hash.");
     }
+    const checkTransactionStatus = await database.swapping.getStorSwapDetails(
+      transactionHash
+    );
 
+    if (checkTransactionStatus?.status) {
+      return response.status(400).send({
+        success: false,
+        message: "This transaction is already processed",
+      });
+    }
     const web3 = getWeb3(send_network);
 
     const transactionReceipt = await web3.eth.getTransaction(transactionHash);
@@ -146,10 +173,39 @@ const transferIntoTreasury = async (request, response) => {
     );
 
     if (!mintStorTokenResponse?.status) {
+      const payload = {
+        walletAddress: transactionReceipt?.from,
+        txnHashStor: transactionHash,
+        status: mintStorTokenResponse?.status,
+        conversionType: "STOR to WSTOR",
+      };
+
+      await database?.swapping?.addSwappingDetails(payload);
+
       return response.status(400).send({
         success: false,
         message:
           "Something went wrong while minting WSTOR token. Please contact customer support.",
+      });
+    }
+
+    const payload = {
+      walletAddress: transactionReceipt?.from,
+      txnHashStor: transactionHash,
+      txnHashWStor: mintStorTokenResponse?.transactionHash,
+      txnAmount: transactionReceipt?.value,
+      status: mintStorTokenResponse?.status,
+      conversionType: "STOR to WSTOR",
+    };
+
+    const swappingDBResponse = await database?.swapping?.addSwappingDetails(
+      payload
+    );
+
+    if (!swappingDBResponse) {
+      return response.status(HTTP_STATUS_CODE.CONFLICT).send({
+        success: false,
+        message: "Unable to save swapping record into database",
       });
     }
 
