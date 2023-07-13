@@ -1,17 +1,19 @@
 const {
   totalSupply,
   balanceOf,
-} = require('../contracts/ContractFunctions/ethContractFunction');
+} = require("../contracts/ContractFunctions/ethContractFunction");
 const {
   transferStorToUser,
   mintWrapStor,
   depositStorByAdmin,
-} = require('../contracts/ContractFunctions/storageChainContractFunction');
-const { getWeb3 } = require('../web3');
+} = require("../contracts/ContractFunctions/storageChainContractFunction");
+const { getWeb3 } = require("../web3");
+
+const database = require("../services/database");
 
 const welcome = async (req, res) => {
   return res.status(200).send({
-    message: 'Welcome to the contract integration api',
+    message: "Welcome to the contract integration api",
     success: true,
   });
 };
@@ -25,7 +27,7 @@ const getTotalSupply = async (req, res) => {
       .send({ success: true, totalSupply: totalSupplyResponse });
   } catch (err) {
     console.error(
-      'file: contract-integration.controller.js:33 ~ getTotalSupply ~ err:',
+      "file: contract-integration.controller.js:33 ~ getTotalSupply ~ err:",
       err
     );
     return res.status(500).send({ err: err.message });
@@ -42,7 +44,7 @@ const getBalanceOf = async (req, res) => {
       .send({ success: true, balanceOf: balanceOfResponse });
   } catch (err) {
     console.error(
-      'file: contract-integration.controller.js:33 ~ getTotalSupply ~ err:',
+      "file: contract-integration.controller.js:33 ~ getTotalSupply ~ err:",
       err
     );
     return res.status(500).send({ err: err.message });
@@ -54,7 +56,7 @@ const depositInTreasury = async (request, response) => {
     const { recive_network, send_network, transactionHash } = request.params;
 
     if (!transactionHash) {
-      throw new Error('Please provide the transaction hash.');
+      throw new Error("Please provide the transaction hash.");
     }
 
     const web3 = getWeb3(recive_network);
@@ -78,22 +80,44 @@ const depositInTreasury = async (request, response) => {
     if (!transferStorToUserResponse?.status) {
       return response.status(400).send({
         success: false,
-        message: 'Something went wrong while transfering STOR tokens to user',
+        message: "Something went wrong while transfering STOR tokens to user",
       });
     }
 
-    return response.status(200).send({
-      success: true,
-      message: 'STOR Transfered to user',
-      data: {
-        transactionReceipt,
-        buredValue,
-        transferStorToUserResponse,
-      },
-    });
+    if (transferStorToUserResponse) {
+      const payload = {
+        walletAddress: transactionReceipt?.from,
+        txnHashWStor: transactionHash,
+        txnHashStor: transferStorToUserResponse?.transactionHash,
+        txnAmount: buredValue,
+        status: transferStorToUserResponse?.status,
+        conversionType: "WSTOR to STOR",
+      };
+
+      const swappingDBResponse = await database?.swapping?.addSwappingDetails(
+        payload
+      );
+
+      if (!swappingDBResponse) {
+        return response.status(HTTP_STATUS_CODE.CONFLICT).send({
+          success: false,
+          message: "Unable to save swapping record into database",
+        });
+      }
+
+      return response.status(200).send({
+        success: true,
+        message: "STOR Transfered to user",
+        data: {
+          transactionReceipt,
+          buredValue,
+          transferStorToUserResponse,
+        },
+      });
+    }
   } catch (err) {
     console.error(
-      'file: contract-integration.controller.js:52 ~ depositInTreasury ~ err:',
+      "file: contract-integration.controller.js:52 ~ depositInTreasury ~ err:",
       err
     );
 
@@ -106,7 +130,7 @@ const transferIntoTreasury = async (request, response) => {
     const { recive_network, send_network, transactionHash } = request.params;
 
     if (!transactionHash) {
-      throw new Error('Please provide the transaction hash.');
+      throw new Error("Please provide the transaction hash.");
     }
 
     const web3 = getWeb3(send_network);
@@ -125,7 +149,7 @@ const transferIntoTreasury = async (request, response) => {
       return response.status(400).send({
         success: false,
         message:
-          'Something went wrong while minting WSTOR token. Please contact customer support.',
+          "Something went wrong while minting WSTOR token. Please contact customer support.",
       });
     }
 
@@ -140,7 +164,7 @@ const transferIntoTreasury = async (request, response) => {
     });
   } catch (err) {
     console.error(
-      'file: contract-integration.controller.js:103 ~ transferIntoTreasury ~ err:',
+      "file: contract-integration.controller.js:103 ~ transferIntoTreasury ~ err:",
       err
     );
     return response.status(500).send({ err: err.message });
@@ -158,20 +182,20 @@ const depositAmount = async (request, response) => {
     if (depositAmountResponse?.status) {
       return response.status(400).send({
         success: false,
-        message: 'Unable to deposit STOR tokens to contract.',
+        message: "Unable to deposit STOR tokens to contract.",
       });
     }
 
     return response.status(200).send({
       success: true,
-      message: 'STOR tokens deposited successfully.',
+      message: "STOR tokens deposited successfully.",
       data: {
         depositAmountResponse,
       },
     });
   } catch (err) {
     console.error(
-      'file: contract-integration.controller.js:153 ~ depositAmount ~ err:',
+      "file: contract-integration.controller.js:153 ~ depositAmount ~ err:",
       err
     );
     return response.status(500).send({ err: err.message });
