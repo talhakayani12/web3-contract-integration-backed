@@ -20,7 +20,9 @@ const getTotalSupply = async (req, res) => {
   try {
     const network_name = req.params.network_name;
     const totalSupplyResponse = await totalSupply(network_name);
-    return res.status(200).send({ totalSupply: totalSupplyResponse });
+    return res
+      .status(200)
+      .send({ success: true, totalSupply: totalSupplyResponse });
   } catch (err) {
     console.error(
       'file: contract-integration.controller.js:33 ~ getTotalSupply ~ err:',
@@ -35,7 +37,9 @@ const getBalanceOf = async (req, res) => {
 
     const balanceOfResponse = await balanceOf(network_name, walletAddress);
 
-    return res.status(200).send({ balanceOf: balanceOfResponse });
+    return res
+      .status(200)
+      .send({ success: true, balanceOf: balanceOfResponse });
   } catch (err) {
     console.error(
       'file: contract-integration.controller.js:33 ~ getTotalSupply ~ err:',
@@ -71,10 +75,21 @@ const depositInTreasury = async (request, response) => {
       buredValue
     );
 
+    if (!transferStorToUserResponse?.status) {
+      return response.status(400).send({
+        success: false,
+        message: 'Something went wrong while transfering STOR tokens to user',
+      });
+    }
+
     return response.status(200).send({
-      transactionReceipt,
-      buredValue,
-      transferStorToUserResponse,
+      success: true,
+      message: 'STOR Transfered to user',
+      data: {
+        transactionReceipt,
+        buredValue,
+        transferStorToUserResponse,
+      },
     });
   } catch (err) {
     console.error(
@@ -106,10 +121,22 @@ const transferIntoTreasury = async (request, response) => {
       transactionReceipt?.value
     );
 
+    if (!mintStorTokenResponse?.status) {
+      return response.status(400).send({
+        success: false,
+        message:
+          'Something went wrong while minting WSTOR token. Please contact customer support.',
+      });
+    }
+
     return response.status(200).send({
-      transactionReceipt,
-      transferedValue: transactionReceipt?.value,
-      mintStorTokenResponse,
+      success: true,
+      message: "WSTOR tokens minted to user's wallet",
+      data: {
+        transactionReceipt,
+        transferedValue: transactionReceipt?.value,
+        mintStorTokenResponse,
+      },
     });
   } catch (err) {
     console.error(
@@ -128,7 +155,20 @@ const depositAmount = async (request, response) => {
 
     const depositAmountResponse = await depositStorByAdmin(web3, amount);
 
-    return response.status(200).send(depositAmountResponse);
+    if (depositAmountResponse?.status) {
+      return response.status(400).send({
+        success: false,
+        message: 'Unable to deposit STOR tokens to contract.',
+      });
+    }
+
+    return response.status(200).send({
+      success: true,
+      message: 'STOR tokens deposited successfully.',
+      data: {
+        depositAmountResponse,
+      },
+    });
   } catch (err) {
     console.error(
       'file: contract-integration.controller.js:153 ~ depositAmount ~ err:',
